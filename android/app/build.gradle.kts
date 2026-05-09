@@ -26,7 +26,12 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val baseProp = localApiBase().ifBlank { project.findProperty("API_BASE_URL")?.toString() ?: "" }.ifBlank { "https://jahaiz-backend.onrender.com/" }
+        // MultiDex required: itext7 + Compose + Hilt exceed the 65k method limit.
+        multiDexEnabled = true
+
+        val baseProp = localApiBase()
+            .ifBlank { project.findProperty("API_BASE_URL")?.toString() ?: "" }
+            .ifBlank { "https://jahaiz-backend.onrender.com/" }
         val base = if (!baseProp.endsWith("/")) "$baseProp/" else baseProp
         buildConfigField("String", "BASE_URL", "\"${base}\"")
     }
@@ -56,12 +61,20 @@ android {
     }
 
     composeOptions {
+        // 1.5.14 is the correct Compose compiler for Kotlin 1.9.24.
         kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE.txt}"
+            excludes += setOf(
+                "/META-INF/{AL2.0,LGPL2.1,LICENSE.md,LICENSE.txt}",
+                // itext7 ships multiple license / notice files that clash
+                "META-INF/NOTICE",
+                "META-INF/LICENSE",
+                "META-INF/DEPENDENCIES",
+                "META-INF/*.kotlin_module",
+            )
         }
     }
 }
@@ -97,7 +110,12 @@ dependencies {
 
     implementation(libs.datastore)
 
-    implementation(libs.itextCore)
+    // itext7 split into individual modules (avoids fat-jar 65k DEX overflow)
+    implementation(libs.itextKernel) {
+        exclude(group = "org.bouncycastle")  // conflicts with Android crypto
+    }
+    implementation(libs.itextLayout)
+    implementation(libs.itextIo)
 
     implementation(libs.accompanistPermissions)
     implementation(libs.accompanistSystemuicontroller)

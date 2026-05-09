@@ -10,7 +10,17 @@ import google.generativeai as genai
 from app.config import settings
 
 
-genai.configure(api_key=settings.GEMINI_API_KEY)
+def _configured_model(model_name: str = "gemini-1.5-flash") -> genai.GenerativeModel:
+    """Return a configured GenerativeModel. Raises RuntimeError if key is missing."""
+    key = settings.GEMINI_API_KEY
+    if not key:
+        raise RuntimeError(
+            "GEMINI_API_KEY environment variable is not set. "
+            "Add it to your deployment secrets."
+        )
+    genai.configure(api_key=key)
+    return genai.GenerativeModel(model_name)
+
 
 IMAGE_ANALYSIS_PROMPT = """
 You are a satirical AI analyzing a photo for an awareness app against dowry culture.
@@ -120,7 +130,7 @@ def _parse_json_loose(text: str) -> dict[str, Any]:
 
 async def analyze_image(image_base64: str, mime_type: str = "image/jpeg") -> dict[str, Any]:
     def _sync() -> dict[str, Any]:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = _configured_model()
         prompt = IMAGE_ANALYSIS_PROMPT
         mt = mime_type if mime_type in ("image/jpeg", "image/png", "image/webp") else "image/jpeg"
         image_part = {"inline_data": {"mime_type": mt, "data": image_base64}}
@@ -135,7 +145,7 @@ async def generate_satire(
     occupation: str, salary: int, ego_level: int, abroad_status: str
 ) -> dict[str, Any]:
     def _sync() -> dict[str, Any]:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = _configured_model()
         prompt = _occupation_satire_prompt(occupation, salary, ego_level, abroad_status)
         response = model.generate_content(prompt)
         txt = getattr(response, "text", "") or ""
@@ -146,7 +156,7 @@ async def generate_satire(
 
 async def calculate_dowry_satire(user_data: dict[str, Any]) -> dict[str, Any]:
     def _sync() -> dict[str, Any]:
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = _configured_model()
         prompt = _dowry_calculation_prompt(user_data)
         response = model.generate_content(prompt)
         txt = getattr(response, "text", "") or ""

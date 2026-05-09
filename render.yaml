@@ -1,16 +1,19 @@
-# Primary Blueprint (repo root — Render discovers this path by default).
-# Python version is pinned by backend/Dockerfile (3.11.11-slim).
+# Render Blueprint — Docker-based Python 3.11 backend.
+# Render discovers this file at the repo root automatically.
 services:
   - type: web
     name: jahaiz-backend
     runtime: docker
-    rootDir: backend
+    # rootDir tells Render where the build context root is.
+    # dockerfilePath is relative to the REPO root.
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     envVars:
       - key: GEMINI_API_KEY
-        sync: false
+        sync: false          # set manually in Render dashboard → "Secret"
       - key: DEBUG
         value: "false"
+      - key: PORT
+        value: "8000"       # Render injects this; uvicorn reads ${PORT:-8000}
     healthCheckPath: /health
     autoDeploy: true

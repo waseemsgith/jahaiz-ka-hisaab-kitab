@@ -1,10 +1,10 @@
 [versions]
-agp = "8.5.1"
+agp = "8.5.2"
 kotlin = "1.9.24"
-composeBom = "2024.08.00"
+composeBom = "2024.06.00"
 hilt = "2.51.1"
-lifecycle = "2.8.4"
-navigationCompose = "2.8.0"
+lifecycle = "2.8.3"
+navigationCompose = "2.7.7"
 retrofit = "2.11.0"
 okhttp = "4.12.0"
 coroutines = "1.8.1"
@@ -41,7 +41,10 @@ lottieCompose = { module = "com.airbnb.android:lottie-compose", version.ref = "l
 coilCompose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 accompanistPermissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 accompanistSystemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-itextCore = { module = "com.itextpdf:itext7-core", version.ref = "itext" }
+# itext7-core is a BOM-style fat-jar; use individual modules to avoid 65k DEX overflow
+itextKernel = { module = "com.itextpdf:kernel", version.ref = "itext" }
+itextLayout = { module = "com.itextpdf:layout", version.ref = "itext" }
+itextIo = { module = "com.itextpdf:io", version.ref = "itext" }
 composeUiTooling = { module = "androidx.compose.ui:ui-tooling" }
 
 [plugins]
@@ -49,3 +52,4 @@ androidApplication = { id = "com.android.application", version.ref = "agp" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlinKapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 hiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+

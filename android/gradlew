@@ -1,0 +1,25 @@
+#!/bin/sh
+# Gradle start up script for UNIX
+APP_NAME="Gradle"
+APP_BASE_NAME=$(basename "$0")
+DEFAULT_JVM_OPTS='"-Xmx64m" "-Xms64m"'
+MAX_FD="maximum"
+warn () { echo "$*"; }
+die () { echo; echo "$*"; echo; exit 1; }
+OS_NAME=$(uname 2>/dev/null || echo "")
+case "$OS_NAME" in CYGWIN* | MINGW* | MSYS*) MSYSTEM=true;; *) MSYSTEM=false;; esac
+DIRNAME=$(cd "$(dirname "$0")" && pwd)
+APP_HOME=$DIRNAME
+CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
+JAVACMD="${JAVA_HOME:+$JAVA_HOME/bin/}java"
+if [ "$JAVA_HOME" = "" ] && [ "$JAVACMD" = "java" ]; then
+  if command -v java >/dev/null 2>&1; then
+    JAVACMD=java
+  else
+    die "ERROR: JAVA_HOME is not set and no 'java' command found in PATH."
+  fi
+fi
+exec "$JAVACMD" $DEFAULT_JVM_OPTS \
+  -classpath "$CLASSPATH" \
+  org.gradle.wrapper.GradleWrapperMain \
+  "$@"

@@ -1,4 +1,8 @@
-"""Brand PDF export with dark/gold meme receipt styling."""
+"""Brand PDF export with dark/gold meme receipt styling.
+
+Pillow is an optional dependency — if not installed the photo is skipped
+but all text content (satire, invoice, roast) is still included.
+"""
 
 from __future__ import annotations
 
@@ -6,11 +10,17 @@ import base64
 import io
 from datetime import datetime
 
-from PIL import Image as PILImage
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import inch
 from reportlab.pdfgen import canvas
+
+# Pillow is optional — import lazily so startup never fails.
+try:
+    from PIL import Image as PILImage  # noqa: F401
+    _PILLOW_AVAILABLE = True
+except ModuleNotFoundError:
+    _PILLOW_AVAILABLE = False
 
 
 FOOTER_LEFT = "Built by Waseem Shareef K S | جہیز کا حساب کتاب"
@@ -48,10 +58,11 @@ def generate_branded_pdf(
     c.setFillColor(colors.HexColor("#FFFFFF"))
 
     img_drawn_y = None
-    if photo_base64:
+    if photo_base64 and _PILLOW_AVAILABLE:
         try:
+            from PIL import Image as _PIL
             raw = base64.b64decode(photo_base64, validate=False)
-            pil_img = PILImage.open(io.BytesIO(raw))
+            pil_img = _PIL.open(io.BytesIO(raw))
             pil_rgb = pil_img.convert("RGB")
             img_side = min(240, pil_rgb.width)
             img_buf = io.BytesIO()

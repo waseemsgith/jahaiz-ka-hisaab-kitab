@@ -1,10 +1,21 @@
+# ── Core API ──────────────────────────────────────────────────────────────────
 fastapi==0.111.0
-uvicorn[standard]==0.30.0
-pydantic==2.7.0
-pydantic-settings==2.3.0
-google-generativeai==0.7.2
+uvicorn[standard]==0.30.1
+pydantic==2.7.4
+pydantic-settings==2.3.4
 python-multipart==0.0.9
-pillow==11.1.0
-reportlab==4.2.0
-httpx==0.27.0
 python-dotenv==1.0.1
+httpx==0.27.0
+
+# ── Gemini AI ─────────────────────────────────────────────────────────────────
+# 0.7.x is the last stable release before the 1.x SDK rewrite.
+# The existing code uses genai.configure + GenerativeModel — keep on 0.7.x.
+google-generativeai==0.7.2
+
+# ── PDF generation ────────────────────────────────────────────────────────────
+# reportlab 4.x is pure-Python; no Pillow needed for text/vector PDFs.
+reportlab==4.2.2
+
+# NOTE: Pillow has been intentionally removed.
+# The pdf_service has been patched to skip photo embedding when Pillow is absent,
+# preserving all text/invoice content of the PDF.
