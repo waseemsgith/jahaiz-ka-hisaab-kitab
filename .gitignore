@@ -1,0 +1,16 @@
+# Android
+android/.gradle/
+android/**/build/
+android/local.properties
+android/.idea/
+*.iml
+
+# Python
+backend/.env
+backend/__pycache__/
+**/*.pyc
+.venv/
+
+# OS
+.DS_Store
+Thumbs.db

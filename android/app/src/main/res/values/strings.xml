@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jahaiz Ka Hisaab Kitab</string>
+
+    <!-- Titles bilingual -->
+    <string name="app_title_dual">جہیز کا حساب کتاب • Jahaiz Ka Hisaab Kitab</string>
+    <string name="app_title_urdu_line">جہیز کا حساب کتاب</string>
+    <string name="tagline_bilingual_line">Kyunki Rishta Bhi Ek Business Hai 💸 / Rishta = satire canvas, dowry myths = punchline.</string>
+
+    <!-- Home -->
+    <string name="hero_tagline">Apne Rishte Ka Hisaab Lagao 🧮 / اپنا حساب خود لگاؤ</string>
+    <string name="hero_body">Fictional “rate-card” vibes for awareness against dowry. Target: toxic demands — not humans.</string>
+    <string name="stats_rishta">Analyzed friendships (meme metre)</string>
+    <string name="stats_rishta_sub">Counters are theatrical / awareness.</string>
+    <string name="stats_rupee_dual">Rupee ticker / روپے ٹِکر</string>
+    <string name="stats_rupee_sub">Satirical ₹ scale — educate, don’t inflate demands.</string>
+    <string name="cta_start">Hisaab Shuru Karo → / شروع کرو →</string>
+    <string name="marquee_intro">Ticker / ٹِکر:</string>
+    <string name="one_liners_parade">
+        “Fortuner DLC unlocked” • “Government job aura patch v99” • “Dubai return, full screen ego” •
+        “Premium rishta, budget tears” • “LinkedIn hustle, sasural hustle” •
+        “Jahez invoice — cancel culture edition” • “Rishta KPIs need therapy” •
+        / «فورچیونر DLC» • «سرکاری نوکری چمک» • «دوبئی ریٹرن ، مکمل اسکرین ایگو»
+    </string>
+
+    <!-- Input -->
+    <string name="screen_input_title_dual">فرم • Form</string>
+    <string name="section_basic_dual">👤 Basic / بنیادی</string>
+    <string name="man_name_dual">Naam • نام (optional meme label)</string>
+    <string name="pick_camera_dual">Camera</string>
+    <string name="pick_gallery_dual">Gallery</string>
+    <string name="photo_attached_dual">Photo URI tail: %1$s</string>
+    <string name="section_occupation_dual">💼 Occupation / پیشہ</string>
+    <string name="occupation_label">Occupation picker</string>
+    <string name="search_hint">Search / ڈھونڈو</string>
+    <string name="financial_dual">💰 Financial / مالیات</string>
+    <string name="monthly_salary_dual">Monthly salary (slider): ₹%1$.1f L/month (lakhs)</string>
+    <string name="abroad_dual">Location flavour / ملک</string>
+    <string name="ego_meter_dual">🎭 Ego / Attitude sliders</string>
+    <string name="ego_lvl_dual">Ego level</string>
+    <string name="family_dual">Family expectation</string>
+    <string name="luxury_dual">Luxury demand</string>
+    <string name="section_demand_dual">🏠 Demands (fictional invoice)</string>
+    <string name="gold_dual">Gold (kg, satire knob): %1$.1f</string>
+    <string name="expected_car_dual">Car tier / گاڑی</string>
+    <string name="prop_sqft_dual">Property sqft (fiction)</string>
+    <string name="wedding_level_dual">Wedding demand level</string>
+    <string name="cta_analyze_dual">Hisaab Lagao / 🔥 تجزیہ 🔥</string>
+
+    <!-- Processing -->
+    <string name="loading_satire_dual">Loading satire engine… / جملے لوڈ ہو رہے…</string>
+    <string name="loading_engine_dual">Loading satire engine… ⚙️</string>
+
+    <!-- Result -->
+    <string name="section_image_roast_dual">AI Image Roast (satire)</string>
+    <string name="premium_rating_dual">⭐ Premium rishta rating: %.1f /10</string>
+    <string name="section_occ_dual">Occupation roast</string>
+    <string name="total_jahaiz_dual">TOTAL JAHAIZ (fiction)</string>
+    <string name="scorecard_dual">Satire gauges</string>
+    <string name="label_ego_dual">Ego score</string>
+    <string name="label_family_dual">Family pressure</string>
+    <string name="label_luxury_dual">Luxury index</string>
+    <string name="rishta_ai_dual">Rishta AI score</string>
+    <string name="dow_mult_dual">Multiplier (meme):</string>
+    <string name="pdf_dual">PDF export</string>
+    <string name="share_dual">Share</string>
+    <string name="retry_dual">Retry</string>
+    <string name="home_dual">Home</string>
+    <string name="footer_credit_dual">Built by Waseem Shareef K S • جہیز کا حساب کتاب</string>
+</resources>

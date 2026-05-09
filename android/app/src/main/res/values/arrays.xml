@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="satire_jokes_dual">
+        <item>Calculating ego level… 📊 | ایگو لیول…</item>
+        <item>Scanning government job aura… 🏛️ | سرکاری چمک سکین…</item>
+        <item>IIT seat detect hua, Fortuner package activate… 🚗 | فورچیونر پیکج آن</item>
+        <item>Dubai return pose analysis ho raha hai… ✈️ | دوبئی ریٹرن پوز</item>
+        <item>Rishte ka rate card tayyar ho raha hai… 📋 | رشتہ ریٹ کارڈ</item>
+        <item>Sasural bidding war start… 💰 | سسرال بولی</item>
+        <item>Dahej-o-meter calibrating… ⚖️ | دہیج-o-میٹر</item>
+    </string-array>
+
+    <string-array name="processing_msgs_dual">
+        <item>📸 Photo analyze ho raha hai… • فوٹو تجزیہ…</item>
+        <item>🤖 AI roast engine loading… • AI روسٹ…</item>
+        <item>💰 Dahej calculator running… • کیلکولیٹر…</item>
+        <item>📊 Satire report tayyar ho raha hai… • رپورٹ…</item>
+        <item>🎭 Final hisaab ready! • فائنل حساب!</item>
+    </string-array>
+</resources>

@@ -1,0 +1,3 @@
+# Copy these lines into android/local.properties (which is gitignored).
+# Gradle injects API_BASE_URL into BuildConfig.BASE_URL at build time.
+API_BASE_URL=https://jahaiz-backend.onrender.com/
