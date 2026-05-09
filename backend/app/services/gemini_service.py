@@ -25,14 +25,16 @@ def _configured_model(model_name: str = "gemini-1.5-flash") -> genai.GenerativeM
 
 
 SATIRE_MODES = [
-    "Dakni Roast", "Shaadi Market Commentary", "Meme Reporter Style",
-    "Fake News Reporter Style", "Rishta Broker Style",
-    "Family WhatsApp Group Style", "LinkedIn Corporate Roast", "Bollywood Narrator Style"
+    "Dakni Roast", "Meme Reporter", "Family WhatsApp Group",
+    "Rishta Broker Commentary", "Bollywood Narrator", "Fake News Anchor",
+    "LinkedIn Corporate Roast", "Hyderabadi Chai Adda Roast",
+    "Shaadi Market Analyst", "Toxic Rishtedaar Commentary"
 ]
 
 TONES = [
     "highly sarcastic", "dramatically shocked", "passively aggressive",
-    "over-enthusiastic broker", "disappointed uncle", "meme lord"
+    "over-enthusiastic broker", "disappointed uncle", "meme lord",
+    "gossiping aunty", "fake intellectual"
 ]
 
 MEME_REFERENCES = [
@@ -40,16 +42,78 @@ MEME_REFERENCES = [
     "Big Boss drama", "Taarak Mehta reaction", "Generic Instagram reel trend"
 ]
 
+RANDOM_OPENINGS = [
+    "Breaking news from shaadi market 📺",
+    "Hyderabad rishta exchange activated ☕",
+    "Government aura levels rising 📈",
+    "Fortuner expectation engine started 🚗",
+    "LinkedIn premium rishta detected 💼",
+    "NRI package inflation scanner online ✈️",
+    "Dowry demand scaling factors checking... 📈"
+]
 
-def _get_random_config() -> tuple[str, str, str]:
-    return random.choice(SATIRE_MODES), random.choice(TONES), random.choice(MEME_REFERENCES)
+RANDOM_ENDINGS = [
+    "Rishta market unstable 😭",
+    "Middle class under pressure 📉",
+    "Family expectations exceeded 💸",
+    "Shaadi inflation continues 📊",
+    "Society ego meter exploded 🧨"
+]
+
+OCCUPATION_ROAST_THEMES = {
+    "SOFTWARE_ENGINEER": [
+        "package flex roast", "remote work roast", "startup burnout roast",
+        "laptop lifestyle roast", "LinkedIn cringe roast", "Leetcode survivor roast"
+    ],
+    "GOVERNMENT_JOB": [
+        "government aura roast", "VIP culture roast", "rishta premium activated roast",
+        "collector sahab satire", "pension flex joke"
+    ],
+    "DOCTOR": [
+        "clinic inheritance roast", "MD/MS degree flex", "24/7 duty but high dowry roast"
+    ],
+    "BUSINESSMAN": [
+        "papa ka business flex", "tax evasion joke", "Fortuner standard roast", "showroom owner ego"
+    ],
+    "DUBAI_RETURN": [
+        "dollar/dirham conversion satire", "Dubai aura roast", "foreign return inflation roast",
+        "perfume and iPhone flex"
+    ],
+    "NRI": [
+        "green card bait roast", "US dreams detect hua", "H1B visa flex", "fake accent roast"
+    ],
+    "DEFAULT": [
+        "middle-class struggle roast", "unrealistic family expectation", "general shaadi market roast"
+    ]
+}
+
+
+def _get_random_config() -> tuple[str, str, str, str, str]:
+    return (
+        random.choice(SATIRE_MODES),
+        random.choice(TONES),
+        random.choice(MEME_REFERENCES),
+        random.choice(RANDOM_OPENINGS),
+        random.choice(RANDOM_ENDINGS)
+    )
+
+def _get_occupation_theme(occupation: str) -> str:
+    # Attempt to match generic terms or keys
+    occ_upper = occupation.upper()
+    theme_list = OCCUPATION_ROAST_THEMES.get("DEFAULT")
+    for key, themes in OCCUPATION_ROAST_THEMES.items():
+        if key in occ_upper or occ_upper in key:
+            theme_list = themes
+            break
+    return random.choice(theme_list)
 
 
 def _image_analysis_prompt() -> str:
-    mode, tone, meme = _get_random_config()
+    mode, tone, meme, opening, ending = _get_random_config()
     return f"""
 You are a satirical AI analyzing a photo for an awareness app against dowry culture.
 Today's Mode: {mode} | Tone: {tone} | Meme Reference: {meme}
+Random Intro Vibe: {opening}
 
 Analyze this person's photo and generate ONLY a JSON response:
 
@@ -65,9 +129,9 @@ Analyze this person's photo and generate ONLY a JSON response:
 }}
 
 IMPORTANT:
-- DO NOT repeat generic lines. Be highly specific and creative.
+- NEVER repeat previous wording. Generate fresh satire every request.
 - Target the CONCEPT of dowry/ego, not the person.
-- Use Hinglish (Hindi + English mix).
+- Use Hinglish (Hindi + English mix) or Dakni if applicable.
 - Keep it family-friendly satire.
 - Respond ONLY with valid JSON, no other text.
 """
@@ -76,19 +140,25 @@ IMPORTANT:
 def _occupation_satire_prompt(
     occupation: str, salary: int, ego_level: int, abroad_status: str
 ) -> str:
-    mode, tone, meme = _get_random_config()
+    mode, tone, meme, opening, ending = _get_random_config()
+    specific_theme = _get_occupation_theme(occupation)
     return f"""
 You are a satire writer for an awareness app against dowry culture.
 Current Style: {mode} | Tone: {tone} | Inspiration: {meme}
+Mandatory Sub-theme for this occupation: {specific_theme}
+Random Intro: {opening}
+Random Ending vibe: {ending}
 
 Generate fresh, completely unique satire for: {occupation} | Salary: ₹{salary}/month | Ego: {ego_level}/10 | Location: {abroad_status}
 
+CRITICAL: NEVER repeat previous wording. Use different tone and structure each time.
+
 Return ONLY valid JSON:
 {{
-  "dakni_urdu_roast": "funny roast in Dakni Urdu (2-3 lines, make it unique and unpredictable)",
+  "dakni_urdu_roast": "funny roast in Dakni Urdu (2-3 lines, highly unique and unpredictable based on the sub-theme '{specific_theme}')",
   "hindi_satire": "Hindi satire line (unpredictable)",
   "english_roast": "English sarcastic one-liner (very fresh)",
-  "occupation_badge": "funny badge name like 'Government Maharaj' or 'Software Sahab'",
+  "occupation_badge": "funny fresh badge name like 'Government Maharaj' or 'Software Sahab'",
   "dowry_multiplier": {round(random.uniform(1.5, 5.5), 1)},
   "ego_commentary": "funny comment on their {ego_level}/10 ego level",
   "family_pressure_line": "funny line about family expectations",
@@ -96,17 +166,18 @@ Return ONLY valid JSON:
   "meme_summary": "meme-style summary line"
 }}
 
-IMPORTANT: Satirical, funny, family-friendly. Target dowry culture, not the person.
-Do not use repetitive patterns. Surprise me!
+IMPORTANT: Satirical, funny, family-friendly. Target dowry culture.
 Return ONLY valid JSON.
 """
 
 
 def _dowry_calculation_prompt(user_data: dict[str, Any]) -> str:
-    mode, tone, meme = _get_random_config()
+    mode, tone, meme, opening, ending = _get_random_config()
     return f"""
 You are an intelligent, socially-aware satirical dowry calculator for an Indian awareness app.
 Current Persona: {mode} | Tone: {tone} | Vibe: {meme}
+Random Intro Vibe: {opening}
+Random Ending Vibe: {ending}
 
 Input Profile:
 - Occupation: {user_data.get('occupation', 'Unknown')}
@@ -131,16 +202,17 @@ CRITICAL REALISM & SATIRE RULES:
    - "Dubai return aura detected ✈️"
 3. Avoid cartoonish nonsense. Make it funny but socially believable.
 4. Total amount must intelligently reflect the sum of line items.
+5. NEVER repeat previous outputs. Every request must be worded uniquely.
 
 Generate a JSON response EXACTLY matching this structure, with YOUR intelligently calculated dynamic numbers:
 {{
   "total_fake_amount": 3870000,
   "line_items": [
-    {{"item": "Selected Car/Bike", "amount": 1800000, "emoji": "🚗", "satire_note": "funny smart note based on occupation"}},
-    {{"item": "Gold (X tola)", "amount": 900000, "emoji": "💍", "satire_note": "funny note"}},
-    {{"item": "Furniture", "amount": 250000, "emoji": "🛋️", "satire_note": "funny note"}},
-    {{"item": "Electronics", "amount": 120000, "emoji": "📱", "satire_note": "funny note"}},
-    {{"item": "Wedding", "amount": 1200000, "emoji": "💒", "satire_note": "funny note"}}
+    {{"item": "Selected Car/Bike", "amount": 1800000, "emoji": "🚗", "satire_note": "highly unique smart note based on occupation"}},
+    {{"item": "Gold (X tola)", "amount": 900000, "emoji": "💍", "satire_note": "highly unique note"}},
+    {{"item": "Furniture", "amount": 250000, "emoji": "🛋️", "satire_note": "highly unique note"}},
+    {{"item": "Electronics", "amount": 120000, "emoji": "📱", "satire_note": "highly unique note"}},
+    {{"item": "Wedding", "amount": 1200000, "emoji": "💒", "satire_note": "highly unique note"}}
   ],
   "satire_disclaimer": "Satire based on social dowry culture trends. This app criticizes dowry practices through humor and awareness.",
   "invoice_header": "JAHAIZ KA OFFICIAL HISAAB 📋",
@@ -174,7 +246,7 @@ async def analyze_image(image_base64: str, mime_type: str = "image/jpeg") -> dic
         image_part = {"inline_data": {"mime_type": mt, "data": image_base64}}
         response = model.generate_content(
             [prompt, image_part],
-            generation_config=GenerationConfig(temperature=0.95, top_p=0.95)
+            generation_config=GenerationConfig(temperature=0.98, top_p=0.95)
         )
         txt = getattr(response, "text", None) or ""
         return _parse_json_loose(txt)
@@ -190,7 +262,7 @@ async def generate_satire(
         prompt = _occupation_satire_prompt(occupation, salary, ego_level, abroad_status)
         response = model.generate_content(
             prompt,
-            generation_config=GenerationConfig(temperature=0.95, top_p=0.95)
+            generation_config=GenerationConfig(temperature=0.98, top_p=0.95)
         )
         txt = getattr(response, "text", "") or ""
         return _parse_json_loose(txt)
@@ -204,7 +276,7 @@ async def calculate_dowry_satire(user_data: dict[str, Any]) -> dict[str, Any]:
         prompt = _dowry_calculation_prompt(user_data)
         response = model.generate_content(
             prompt,
-            generation_config=GenerationConfig(temperature=0.95, top_p=0.95)
+            generation_config=GenerationConfig(temperature=0.98, top_p=0.95)
         )
         txt = getattr(response, "text", "") or ""
         return _parse_json_loose(txt)
