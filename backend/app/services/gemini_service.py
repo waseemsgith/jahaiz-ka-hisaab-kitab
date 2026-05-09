@@ -3,9 +3,11 @@ from __future__ import annotations
 import asyncio
 import json
 import re
+import random
 from typing import Any
 
 import google.generativeai as genai
+from google.generativeai.types import GenerationConfig
 
 from app.config import settings
 
@@ -22,94 +24,130 @@ def _configured_model(model_name: str = "gemini-1.5-flash") -> genai.GenerativeM
     return genai.GenerativeModel(model_name)
 
 
-IMAGE_ANALYSIS_PROMPT = """
+SATIRE_MODES = [
+    "Dakni Roast", "Shaadi Market Commentary", "Meme Reporter Style",
+    "Fake News Reporter Style", "Rishta Broker Style",
+    "Family WhatsApp Group Style", "LinkedIn Corporate Roast", "Bollywood Narrator Style"
+]
+
+TONES = [
+    "highly sarcastic", "dramatically shocked", "passively aggressive",
+    "over-enthusiastic broker", "disappointed uncle", "meme lord"
+]
+
+MEME_REFERENCES = [
+    "Hera Pheri style", "Mirzapur style", "Shark Tank pitch",
+    "Big Boss drama", "Taarak Mehta reaction", "Generic Instagram reel trend"
+]
+
+
+def _get_random_config() -> tuple[str, str, str]:
+    return random.choice(SATIRE_MODES), random.choice(TONES), random.choice(MEME_REFERENCES)
+
+
+def _image_analysis_prompt() -> str:
+    mode, tone, meme = _get_random_config()
+    return f"""
 You are a satirical AI analyzing a photo for an awareness app against dowry culture.
+Today's Mode: {mode} | Tone: {tone} | Meme Reference: {meme}
 
 Analyze this person's photo and generate ONLY a JSON response:
 
-{
+{{
   "pose_analysis": "funny satirical 1-line description of pose",
   "fashion_vibe": "satirical fashion commentary",
   "detected_aura": "government_job / software_engineer / dubai_return / startup_bro / etc",
-  "premium_rishta_rating": 7.5,
-  "fake_ego_level": 8,
-  "ai_roast_line": "one funny satirical roast line in Hinglish",
+  "premium_rishta_rating": {round(random.uniform(3.0, 9.9), 1)},
+  "fake_ego_level": {random.randint(5, 10)},
+  "ai_roast_line": "one funny satirical roast line in Hinglish that feels completely fresh",
   "floating_tags": ["Tag1", "Tag2", "Tag3"],
   "meme_caption": "meme-style caption"
-}
+}}
 
 IMPORTANT:
-- Keep it SATIRICAL and FUNNY, NOT offensive
-- Target the CONCEPT of dowry, not the person
-- Use Hinglish (Hindi + English mix)
-- Keep it family-friendly satire
-- Respond ONLY with valid JSON, no other text
+- DO NOT repeat generic lines. Be highly specific and creative.
+- Target the CONCEPT of dowry/ego, not the person.
+- Use Hinglish (Hindi + English mix).
+- Keep it family-friendly satire.
+- Respond ONLY with valid JSON, no other text.
 """
 
 
 def _occupation_satire_prompt(
     occupation: str, salary: int, ego_level: int, abroad_status: str
 ) -> str:
+    mode, tone, meme = _get_random_config()
     return f"""
-You are a Dakni Urdu satire writer for an awareness app against dowry culture.
+You are a satire writer for an awareness app against dowry culture.
+Current Style: {mode} | Tone: {tone} | Inspiration: {meme}
 
-Generate satire for: {occupation} | Salary: ₹{salary}/month | Ego: {ego_level}/10 | Location: {abroad_status}
+Generate fresh, completely unique satire for: {occupation} | Salary: ₹{salary}/month | Ego: {ego_level}/10 | Location: {abroad_status}
 
 Return ONLY valid JSON:
 {{
-  "dakni_urdu_roast": "funny roast in Dakni Urdu (2-3 lines)",
-  "hindi_satire": "Hindi satire line",
-  "english_roast": "English sarcastic one-liner",
+  "dakni_urdu_roast": "funny roast in Dakni Urdu (2-3 lines, make it unique and unpredictable)",
+  "hindi_satire": "Hindi satire line (unpredictable)",
+  "english_roast": "English sarcastic one-liner (very fresh)",
   "occupation_badge": "funny badge name like 'Government Maharaj' or 'Software Sahab'",
-  "dowry_multiplier": 3.5,
-  "ego_commentary": "funny comment on ego level",
+  "dowry_multiplier": {round(random.uniform(1.5, 5.5), 1)},
+  "ego_commentary": "funny comment on their {ego_level}/10 ego level",
   "family_pressure_line": "funny line about family expectations",
-  "rishta_premium_score": 8.2,
+  "rishta_premium_score": {round(random.uniform(4.0, 9.5), 1)},
   "meme_summary": "meme-style summary line"
 }}
 
-Examples:
-- IAS: "Dakni: Sarkari thane ka darwaza khulte hi Fortuner aur 50 tola sona ki demand shuru!"
-- Software Engineer: "US dreams detect hua, H1B visa ke saath teen BHK ki demand bhi aai!"
-- Dubai Return: "Dubai se aate hi ego level 100 pe, demand bhi Dubai market rate pe!"
-
 IMPORTANT: Satirical, funny, family-friendly. Target dowry culture, not the person.
+Do not use repetitive patterns. Surprise me!
 Return ONLY valid JSON.
 """
 
 
 def _dowry_calculation_prompt(user_data: dict[str, Any]) -> str:
+    mode, tone, meme = _get_random_config()
     return f"""
-You are a satirical dowry calculator for an awareness app.
+You are an intelligent, socially-aware satirical dowry calculator for an Indian awareness app.
+Current Persona: {mode} | Tone: {tone} | Vibe: {meme}
 
-Input data:
-- Occupation: {user_data['occupation']}
-- Salary: ₹{user_data['salary']}/month
-- Abroad: {user_data['abroad_status']}
-- Ego Level: {user_data['ego_level']}/10
-- Family Expectation: {user_data['family_expectation']}/10
-- Luxury Level: {user_data['luxury_level']}/10
-- Gold Demand: {user_data['gold_kg']} kg
-- Car Demand: {user_data['car']}
-- Wedding Level: {user_data['wedding_level']}
+Input Profile:
+- Occupation: {user_data.get('occupation', 'Unknown')}
+- Salary: ₹{user_data.get('salary', 0)}/month
+- Abroad: {user_data.get('abroad_status', 'No')}
+- Ego Level: {user_data.get('ego_level', 5)}/10
+- Family Expectation: {user_data.get('family_expectation', 5)}/10
+- Luxury Level: {user_data.get('luxury_level', 5)}/10
+- Gold Demand: {user_data.get('gold_kg', 0)} kg
+- Car Demand: {user_data.get('car', 'None')}
+- Wedding Level: {user_data.get('wedding_level', 'Basic')}
 
-Generate satirical (fictional/fake) dowry invoice as JSON:
+CRITICAL REALISM & SATIRE RULES:
+1. Generate realistic, believable amounts based on the Indian social class of the profile:
+   - LOWER MIDDLE CLASS: Bike, 5–15 tola gold, furniture, ₹2L–₹8L total pressure.
+   - MIDDLE CLASS: Swift/Baleno/Brezza, ₹5L–₹20L expectations, standard wedding expenses.
+   - UPPER MIDDLE CLASS: Creta/XUV700/Fortuner, ₹15L–₹60L expectations, luxury wedding.
+   - ELITE / IAS / NRI: Exaggerated but believable. ₹50L–₹1.5Cr MAX. NEVER generate absurd 10+ crore amounts.
+2. Smart Satire Examples:
+   - "Software engineer hai toh Creta expectation toh banta hai 🚗"
+   - "Government naukri premium automatically activated 🏛️"
+   - "Dubai return aura detected ✈️"
+3. Avoid cartoonish nonsense. Make it funny but socially believable.
+4. Total amount must intelligently reflect the sum of line items.
+
+Generate a JSON response EXACTLY matching this structure, with YOUR intelligently calculated dynamic numbers:
 {{
-  "total_fake_amount": 5000000,
+  "total_fake_amount": 3870000,
   "line_items": [
-    {{"item": "Fortuner", "amount": 4200000, "emoji": "🚗", "satire_note": "funny note"}},
-    {{"item": "Gold 10kg", "amount": 6800000, "emoji": "💍", "satire_note": "funny note"}},
-    {{"item": "2BHK Flat", "amount": 8500000, "emoji": "🏠", "satire_note": "funny note"}},
-    {{"item": "iPhone Package", "amount": 200000, "emoji": "📱", "satire_note": "funny note"}},
-    {{"item": "AC+Fridge+TV", "amount": 300000, "emoji": "❄️", "satire_note": "funny note"}},
-    {{"item": "Wedding Shaadi", "amount": 2000000, "emoji": "💒", "satire_note": "funny note"}}
+    {{"item": "Selected Car/Bike", "amount": 1800000, "emoji": "🚗", "satire_note": "funny smart note based on occupation"}},
+    {{"item": "Gold (X tola)", "amount": 900000, "emoji": "💍", "satire_note": "funny note"}},
+    {{"item": "Furniture", "amount": 250000, "emoji": "🛋️", "satire_note": "funny note"}},
+    {{"item": "Electronics", "amount": 120000, "emoji": "📱", "satire_note": "funny note"}},
+    {{"item": "Wedding", "amount": 1200000, "emoji": "💒", "satire_note": "funny note"}}
   ],
-  "satire_disclaimer": "funny disclaimer text",
+  "satire_disclaimer": "Satire based on social dowry culture trends. This app criticizes dowry practices through humor and awareness.",
   "invoice_header": "JAHAIZ KA OFFICIAL HISAAB 📋",
-  "footer_joke": "funny invoice footer"
+  "footer_joke": "completely unique realistic invoice footer"
 }}
 
-Make amounts exaggerated and satirical. Return ONLY valid JSON.
+Return ONLY valid JSON.
 """
 
 
@@ -131,10 +169,13 @@ def _parse_json_loose(text: str) -> dict[str, Any]:
 async def analyze_image(image_base64: str, mime_type: str = "image/jpeg") -> dict[str, Any]:
     def _sync() -> dict[str, Any]:
         model = _configured_model()
-        prompt = IMAGE_ANALYSIS_PROMPT
+        prompt = _image_analysis_prompt()
         mt = mime_type if mime_type in ("image/jpeg", "image/png", "image/webp") else "image/jpeg"
         image_part = {"inline_data": {"mime_type": mt, "data": image_base64}}
-        response = model.generate_content([prompt, image_part])
+        response = model.generate_content(
+            [prompt, image_part],
+            generation_config=GenerationConfig(temperature=0.95, top_p=0.95)
+        )
         txt = getattr(response, "text", None) or ""
         return _parse_json_loose(txt)
 
@@ -147,7 +188,10 @@ async def generate_satire(
     def _sync() -> dict[str, Any]:
         model = _configured_model()
         prompt = _occupation_satire_prompt(occupation, salary, ego_level, abroad_status)
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            generation_config=GenerationConfig(temperature=0.95, top_p=0.95)
+        )
         txt = getattr(response, "text", "") or ""
         return _parse_json_loose(txt)
 
@@ -158,7 +202,10 @@ async def calculate_dowry_satire(user_data: dict[str, Any]) -> dict[str, Any]:
     def _sync() -> dict[str, Any]:
         model = _configured_model()
         prompt = _dowry_calculation_prompt(user_data)
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            generation_config=GenerationConfig(temperature=0.95, top_p=0.95)
+        )
         txt = getattr(response, "text", "") or ""
         return _parse_json_loose(txt)
 

@@ -25,7 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenu
+
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -45,7 +45,11 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import kotlinx.coroutines.launch
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -145,9 +149,13 @@ fun InputScreen(
 
     val scroll = rememberScrollState()
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = JahaizBlack,
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = JahaizBlack),
@@ -351,6 +359,18 @@ fun InputScreen(
 
             Button(
                 onClick = {
+                    if (name.isBlank()) {
+                        val errors = listOf(
+                            "Arre bhai naam toh batao pehle 😭",
+                            "Rishta bina info ke kaise judge karein? 📋",
+                            "Gumnaam rishtey hum analyze nahi karte 😏",
+                            "Naam chupane se package kam nahi hota! 💸"
+                        )
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar(errors.random())
+                        }
+                        return@Button
+                    }
                     vm.saveDraft(
                         UserInput(
                             name = name.trim(),
