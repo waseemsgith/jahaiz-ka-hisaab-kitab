@@ -8,13 +8,29 @@
 
 ## Step 2: Deploy Backend to Render (FREE)
 
-1. Push this repository to GitHub under your account.
-2. In [Render](https://render.com): **New → Web Service** → connect the repo.
-3. Set **Root Directory** to `backend` (or use the included `render.yaml` blueprint).
-4. **Build command:** `pip install -r requirements.txt`
-5. **Start command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-6. Add environment variable **`GEMINI_API_KEY`** in the Render dashboard.
-7. After deploy, copy your public URL, e.g. `https://jahaiz-backend.onrender.com/`.
+The backend is deployed with **Docker** so production always uses **Python 3.11** from `backend/Dockerfile` (avoids native Render default **3.14** and broken **Pillow** source builds).
+
+### Option A — Blueprint (recommended)
+
+1. Push this repository to GitHub.
+2. In Render: **New → Blueprint** → select the repo → Render loads **`render.yaml`** at the **repository root**.
+3. Set secret **`GEMINI_API_KEY`** when prompted (or add it under the service **Environment** after sync).
+4. Deploy. The image builds from **`./backend/Dockerfile`** with context **`./backend`**.
+
+### Option B — Manual Docker web service
+
+1. **New → Web Service** → connect the repo.
+2. Set **Language / Runtime** to **Docker** (not Python).
+3. **Dockerfile path:** `backend/Dockerfile`  
+   **Docker build context:** `backend`
+4. Add **`GEMINI_API_KEY`** in **Environment**.
+5. Health check path: **`/health`** (optional but matches the app).
+
+### Migrating an existing **native Python** service
+
+Change the service to **Docker** in the dashboard (or recreate the service) so it no longer uses the native Python runtime. The old **build/start** commands are replaced by the Dockerfile **`CMD`**.
+
+After deploy, copy your public URL, e.g. `https://jahaiz-backend.onrender.com/`.
 
 ### Optional: deploy hook (GitHub Actions)
 

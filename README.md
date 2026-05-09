@@ -9,7 +9,8 @@ Satirical **dowry-awareness** experience: a Jetpack Compose Android client talks
 ## Repository layout
 
 - `android/` — Android Studio / Gradle project (Compose, Hilt, Retrofit, Coil, Lottie, iText7).
-- `backend/` — FastAPI service (`/api/image`, `/api/satire`, `/api/dowry`, `/api/pdf`) with `render.yaml` (root directory `backend`).
+- `backend/` — FastAPI service (`/api/image`, `/api/satire`, `/api/dowry`, `/api/pdf`) with **`Dockerfile`** (Python **3.11** pinned in the image).
+- `render.yaml` (repo root) — Render Blueprint: **Docker** deploy, `rootDir: backend`.
 - `.github/workflows/deploy.yml` — optional Render deploy hook + debug APK build.
 
 ## Quick start — Android
